@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Verification Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .tab-active {
+            border-bottom: 3px solid #16a34a; /* green-600 */
+            color: #16a34a; /* green-600 */
+            font-weight: 600;
+        }
+        .tab-inactive {
+            color: #6b7280; /* gray-500 */
+        }
+        /* Style for the camera overlay */
+        #camera-view {
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <div id="app-container" class="max-w-md mx-auto bg-white min-h-screen shadow-lg">
+        <!-- Header -->
+        <header class="p-4 bg-white sticky top-0 z-10 shadow-sm">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-800">Orders</h1>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2 text-sm border border-gray-300 rounded-full px-3 py-1">
+                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                        <span>Normal</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+                    </div>
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-more-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tabs -->
+        <nav class="flex justify-around bg-white border-b border-gray-200">
+            <button class="py-3 px-2 tab-active w-full">
+                Preparing <span class="bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">6</span>
+            </button>
+            <button class="py-3 px-2 tab-inactive w-full">Ready</button>
+            <button class="py-3 px-2 tab-inactive w-full">Upcoming</button>
+            <button class="py-3 px-2 tab-inactive w-full">History</button>
+        </nav>
+
+        <!-- Order List -->
+        <main id="order-list" class="p-3 space-y-3 bg-gray-50">
+            <!-- Order Card 1 -->
+            <div id="order-GF-415" class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div class="p-4 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800">GF-415 <span class="text-xs bg-red-500 text-white font-semibold px-2 py-0.5 rounded-md align-middle">NEW</span></h2>
+                        <p class="text-sm text-gray-500">Ready in: 0:02 min</p>
+                        <p class="text-sm text-gray-500">4 items</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="openCamera('GF-415')" class="p-2 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+                            <i data-lucide="camera" class="w-5 h-5"></i>
+                        </button>
+                        <button onclick="markOrderReady('GF-415')" class="w-full text-sm font-semibold py-2 px-5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            Ready
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Card 2 -->
+            <div id="order-GF-652" class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                 <div class="p-4 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-bold text-gray-800">GF-652 <span class="text-xs bg-red-500 text-white font-semibold px-2 py-0.5 rounded-md align-middle">NEW</span></h2>
+                        <p class="text-sm text-gray-500">Ready in: 8:25 min</p>
+                        <p class="text-sm text-gray-500">1 item · Cash</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="openCamera('GF-652')" class="p-2 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+                            <i data-lucide="camera" class="w-5 h-5"></i>
+                        </button>
+                        <button onclick="markOrderReady('GF-652')" class="w-full text-sm font-semibold py-2 px-5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            Ready
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Other cards would go here -->
+            <div class="text-center text-gray-400 py-4 text-sm">More orders...</div>
+
+        </main>
+    </div>
+
+    <!-- Camera View (Initially Hidden) -->
+    <div id="camera-view" class="fixed inset-0 bg-black z-50 hidden">
+        <!-- Mock Camera Background -->
+        <div class="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-900"></div>
+
+        <!-- Camera UI -->
+        <div class="relative z-10 h-full flex flex-col">
+            <!-- Top Bar with Close Button -->
+            <div class="p-4 flex justify-end">
+                <button onclick="closeCamera()" class="bg-black/40 text-white rounded-full p-2">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Guidance Text and Frame -->
+            <div class="flex-grow flex items-center justify-center p-4">
+                <div class="w-full max-w-sm text-center">
+                    <div class="border-2 border-dashed border-white/50 rounded-xl p-8 bg-white/10 backdrop-blur-sm">
+                         <p class="text-white text-lg font-semibold">Photograph all bags and the receipt.</p>
+                         <p class="text-white/70 text-sm mt-2">Ensure the entire receipt is clear and readable.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Bar with Shutter Button -->
+            <div class="p-6 flex justify-center">
+                <button onclick="takePhoto()" class="w-20 h-20 bg-white rounded-full flex items-center justify-center ring-4 ring-white/30">
+                    <div class="w-16 h-16 bg-white rounded-full border-4 border-black"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        lucide.createIcons();
+
+        const cameraView = document.getElementById('camera-view');
+        let activeOrderId = null;
+
+        // --- Functions to control the UI ---
+
+        /**
+         * Opens the camera view overlay.
+         * @param {string} orderId - The ID of the order being actioned.
+         */
+        function openCamera(orderId) {
+            activeOrderId = orderId;
+            cameraView.classList.remove('hidden');
+            cameraView.classList.add('opacity-100');
+        }
+
+        /**
+         * Closes the camera view overlay.
+         */
+        function closeCamera() {
+            cameraView.classList.add('opacity-0');
+            // Wait for transition to finish before hiding
+            setTimeout(() => {
+                cameraView.classList.add('hidden');
+                cameraView.classList.remove('opacity-0'); // Reset for next time
+            }, 300);
+        }
+
+        /**
+         * Simulates taking a photo.
+         * It closes the camera and removes the order card from the list.
+         */
+        function takePhoto() {
+            console.log('Photo taken for order:', activeOrderId);
+            closeCamera();
+            
+            // Add a small delay to feel more realistic
+            setTimeout(() => {
+                if (activeOrderId) {
+                    removeOrderCard(activeOrderId);
+                }
+            }, 300);
+        }
+
+        /**
+         * Simulates marking an order as ready without a photo.
+         * Removes the order card from the list.
+         * @param {string} orderId - The ID of the order to remove.
+         */
+        function markOrderReady(orderId) {
+            console.log('Marking order as ready:', orderId);
+            removeOrderCard(orderId);
+        }
+        
+        /**
+         * Removes an order card from the DOM with a fade-out effect.
+         * @param {string} orderId - The ID of the order card element.
+         */
+        function removeOrderCard(orderId) {
+            const card = document.getElementById(`order-${orderId}`);
+            if (card) {
+                card.style.transition = 'opacity 0.5s, transform 0.5s';
+                card.style.opacity = '0';
+                card.style.transform = 'translateX(100%)';
+                setTimeout(() => card.remove(), 500);
+            }
+        }
+    </script>
+</body>
+</html>
